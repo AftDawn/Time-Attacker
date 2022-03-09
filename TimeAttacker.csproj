@@ -22,16 +22,16 @@
 
   <ItemGroup>
     <Reference Include="Celeste, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\..\..\mnt\Linux Game Drive\Steam\steamapps\common\Celeste\Celeste.exe</HintPath>
+      <HintPath>..\..\Celeste.exe</HintPath>
     </Reference>
     <Reference Include="FNA, Version=21.7.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\..\..\mnt\Linux Game Drive\Steam\steamapps\common\Celeste\FNA.dll</HintPath>
+      <HintPath>..\..\FNA.dll</HintPath>
     </Reference>
     <Reference Include="MMHOOK_Celeste, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\..\..\mnt\Linux Game Drive\Steam\steamapps\common\Celeste\MMHOOK_Celeste.dll</HintPath>
+      <HintPath>..\..\MMHOOK_Celeste.dll</HintPath>
     </Reference>
     <Reference Include="YamlDotNet, Version=8.0.0.0, Culture=neutral, PublicKeyToken=ec19458f3c15af5e">
-      <HintPath>..\..\..\..\mnt\Linux Game Drive\Steam\steamapps\common\Celeste\YamlDotNet.dll</HintPath>
+      <HintPath>..\..\YamlDotNet.dll</HintPath>
     </Reference>
   </ItemGroup>
 

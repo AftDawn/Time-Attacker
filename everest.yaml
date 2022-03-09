@@ -1,5 +1,5 @@
-﻿- Name: TimeAttacker
-  Version: 1.0.0
+﻿- Name: Time Attacker
+  Version: 0.1.0
   DLL: bin/Debug/net452/TimeAttacker.dll
   Dependencies:
     - Name: Everest
