@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using Microsoft.Xna.Framework;
 using Monocle;
 
@@ -20,15 +21,15 @@ namespace Celeste.Mod.TimeAttacker {
         }
 
         public override Type SettingsType => typeof(TimeAttackerSettings);
-        public static TimeAttackerSettings Settings => (TimeAttackerSettings)Instance._Settings;
+        public static TimeAttackerSettings privateSettings => (TimeAttackerSettings)Instance._Settings;
         
         //public override Type SaveDataType => typeof(TimeAttackerSaveData);
         //public static TimeAttackerSaveData SaveData => (TimeAttackerSaveData) Instance._SaveData;
 
         public override void Load()
         {
-            Logger.SetLogLevel("AftDawn/TimeAttacker", LogLevel.Verbose);
-            Logger.Log(LogLevel.Verbose, "AftDawn/TimeAttacker", "Hello Mt Celeste");
+            Logger.SetLogLevel("AftDawn/", LogLevel.Verbose);
+            Logger.Log(LogLevel.Verbose, "AftDawn/", "Hello Mt Celeste");
             
             On.Celeste.SpeedrunTimerDisplay.DrawTime += SpeedrunTimerDisplay_DrawTime;
             On.Celeste.SpeedrunTimerDisplay.CalculateBaseSizes += SpeedrunTimerDisplay_CalcuateBaseSizes;
@@ -51,7 +52,7 @@ namespace Celeste.Mod.TimeAttacker {
 
         private void SpeedrunTimerDisplay_DrawTime(On.Celeste.SpeedrunTimerDisplay.orig_DrawTime orig, Vector2 position, string timeString, float scale, bool valid, bool finished, bool bestTime, float alpha)
         {
-            if (Settings.Enable && (Engine.Scene as Level) != null)
+            if (privateSettings.Enable && (Engine.Scene as Level) != null)
             {
                 PixelFont font = Dialog.Languages["english"].Font;
                 float fontFaceSize = Dialog.Languages["english"].FontFaceSize;
@@ -76,24 +77,21 @@ namespace Celeste.Mod.TimeAttacker {
                     secondary = Calc.HexToColor("43d14c") * alpha;
                 }
 
-                for (int i = 0; i < timeString.Length; i++)
+                for (int index = 0; index < timeString.Length; index++)
                 {
-                    char currentCharacter = timeString[i];
+                    char currentCharacter = timeString[index];
                     if (currentCharacter == '.')
                     {
                         scaleFactor = scale * 0.7f;
                         posY -= 5f * scale;
                     }
 
-                    Color color3 = (currentCharacter == ':' || currentCharacter == '.' || scaleFactor < scale) ? secondary : main;
+                    Color altCharacterColour = (currentCharacter == ':' || currentCharacter == '.' || scaleFactor < scale) ? secondary : main;
                     
-                    float num4 = (((currentCharacter == ':' || currentCharacter == '.') ? SpeedrunTimerDisplay.spacerWidth : SpeedrunTimerDisplay.numberWidth) + 4f) * scaleFactor;
+                    float altCharacterPos = (((currentCharacter == ':' || currentCharacter == '.') ? spacerWidth : numberWidth) + 4f) * scaleFactor;
                     
-                    font.DrawOutline(fontFaceSize, currentCharacter.ToString(),
-                        new Vector2(posX + num4 / 2f, posY),
-                        new Vector2(0.5f, 1f), Vector2.One * scaleFactor,
-                        color3, 2f, Color.Black);
-                    posX += num4;
+                    font.DrawOutline(fontFaceSize, currentCharacter.ToString(), new Vector2(posX + altCharacterPos / 2f, posY), new Vector2(0.5f, 1f), Vector2.One * scaleFactor, altCharacterColour, 2f, Color.Black);
+                    posX += altCharacterPos;
                 }
             }
             else
@@ -102,9 +100,16 @@ namespace Celeste.Mod.TimeAttacker {
             }
         }
 
+        private float numberWidth;
+        private float spacerWidth;
+        
         private void SpeedrunTimerDisplay_CalcuateBaseSizes(On.Celeste.SpeedrunTimerDisplay.orig_CalculateBaseSizes orig)
         {
             orig();
+            FieldInfo nw = typeof(SpeedrunTimerDisplay).GetField("numberWidth", BindingFlags.NonPublic | BindingFlags.Static);
+            FieldInfo sw = typeof(SpeedrunTimerDisplay).GetField("spacerWidth", BindingFlags.NonPublic | BindingFlags.Static);
+            numberWidth = (float)nw.GetValue(null);
+            spacerWidth = (float)sw.GetValue(null);
         }
 
         private void SpeedrunTimerDisplay_RegisterAreaComplete(On.Celeste.Level.orig_RegisterAreaComplete orig, Level level)
@@ -116,14 +121,5 @@ namespace Celeste.Mod.TimeAttacker {
         {
             orig(self);
         }
-        
-        // small helper code and shit idk lol
-        private string formatTime(int seconds)
-        {
-            int remainder = seconds % 60;
-            string time = (seconds / 60) + ":" + (remainder < 10 ? "0" : "") + remainder;
-            return time;
-        }
-
     }
 }
